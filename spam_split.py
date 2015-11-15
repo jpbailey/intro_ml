@@ -1,19 +1,22 @@
-import os
-import random
-import shutil
-
-# download the corpus from:  http://spamassassin.apache.org/publiccorpus/
-# http://spamassassin.apache.org/publiccorpus/20030228_easy_ham.tar.bz2
-# http://spamassassin.apache.org/publiccorpus/20030228_spam.tar.bz2
-
-# need to add more commenting
-
+"""
+Edited November 15, 2015 by Joe Bailey
+download the corpus from:  http://spamassassin.apache.org/publiccorpus/
+http://spamassassin.apache.org/publiccorpus/20030228_easy_ham.tar.bz2
+http://spamassassin.apache.org/publiccorpus/20030228_spam.tar.bz2
+"""
 
 # define globl variables here
 HAMPATH = "./ham/"
 SPAMPATH = "./spam/"
 STOPS = stopwords.words('english')
 SPLIT = 0.6 # percentage of the universe one uses to split the sample to train or test
+
+
+# import the libraries needed
+import os
+import random
+import shutil
+
 
 if not os.path.exists("./train-ham/"):
 	os.makedirs("./train-ham/")
