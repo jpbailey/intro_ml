@@ -6,6 +6,9 @@ import shutil
 
 STOPS = stopwords.words('english')
 
+# need to add more commenting
+# need to add more commenting
+
 
 # now see how well we do applying the model to the test set
 

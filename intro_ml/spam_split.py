@@ -6,6 +6,8 @@ import shutil
 # http://spamassassin.apache.org/publiccorpus/20030228_easy_ham.tar.bz2
 # http://spamassassin.apache.org/publiccorpus/20030228_spam.tar.bz2
 
+# need to add more commenting
+
 
 # define globl variables here
 HAMPATH = "./ham/"

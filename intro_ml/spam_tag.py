@@ -6,6 +6,7 @@ import shutil
 
 STOPS = stopwords.words('english')
 
+# need to add more commenting
 
 # find the top 100 words in the spam and ham train directories
 
