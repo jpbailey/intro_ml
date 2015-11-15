@@ -2,10 +2,6 @@
 Edited November 15, 2015 by Joe Bailey
 """
 
-# define global variables
-STOPS = stopwords.words('english')
-
-
 # import the libraries needed
 import os
 import nltk
@@ -13,7 +9,10 @@ from nltk.corpus import stopwords
 import random
 import shutil
 
-
+# define global variables
+STOPS = stopwords.words('english')
+SPAMDIR = "./train_spam/"
+HAMDIR = "./train_ham/"
 
 # need to add more commenting
 # need to add more commenting
