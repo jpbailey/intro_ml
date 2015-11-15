@@ -1,14 +1,16 @@
 """
 Edited November 15, 2015 by Joe Bailey
 download the corpus from:  http://spamassassin.apache.org/publiccorpus/
+in particular you want two files.  the first file should be in
+the same directory with this scrips an called "easy_ham":
 http://spamassassin.apache.org/publiccorpus/20030228_easy_ham.tar.bz2
+the second file you can get from the following url and should be in a directory called "spam":
 http://spamassassin.apache.org/publiccorpus/20030228_spam.tar.bz2
 """
 
 # define globl variables here
-HAMPATH = "./ham/"
+HAMPATH = "./easy_ham/"
 SPAMPATH = "./spam/"
-STOPS = stopwords.words('english')
 SPLIT = 0.6 # percentage of the universe one uses to split the sample to train or test
 
 
@@ -18,29 +20,29 @@ import random
 import shutil
 
 
-if not os.path.exists("./train-ham/"):
-	os.makedirs("./train-ham/")
+if not os.path.exists("./train_ham/"):
+	os.makedirs("./train_ham/")
 else:
-	shutil.rmtree("./train-ham/")
-	os.makedirs("./train-ham/")
+	shutil.rmtree("./train_ham/")
+	os.makedirs("./train_ham/")
 
-if not os.path.exists("./test-ham/"):
-	os.makedirs("./test-ham/")
+if not os.path.exists("./test_ham/"):
+	os.makedirs("./test_ham/")
 else:
-	shutil.rmtree("./test-ham/")
-	os.makedirs("./test-ham/")
+	shutil.rmtree("./test_ham/")
+	os.makedirs("./test_ham/")
 
-if not os.path.exists("./train-spam/"):
-	os.makedirs("./train-spam/")
+if not os.path.exists("./train_spam/"):
+	os.makedirs("./train_spam/")
 else:
-	shutil.rmtree("./train-spam/")
-	os.makedirs("./train-spam/")
+	shutil.rmtree("./train_spam/")
+	os.makedirs("./train_spam/")
 
-if not os.path.exists("./test-spam/"):
-	os.makedirs("./test-spam/")
+if not os.path.exists("./test_spam/"):
+	os.makedirs("./test_spam/")
 else:
-	shutil.rmtree("./test-spam/")
-	os.makedirs("./test-spam/")
+	shutil.rmtree("./test_spam/")
+	os.makedirs("./test_spam/")
 
 # go through each directory and separate out a training and a testing set
 # first do this for the ham files
@@ -50,11 +52,11 @@ for (dirpath, dirnames, filenames) in os.walk(HAMPATH):
 	for filename in filenames:
 		infile=(HAMPATH + filename)
 		if random.uniform(0,1)<SPLIT:
-			outfile=("./train-ham/" + filename)
+			outfile=("./train_ham/" + filename)
 			shutil.copy(infile,outfile)
 			train_ham_files[filename] = os.sep.join([dirpath, filename])
 		else:
-			outfile=("./test-ham/" + filename)
+			outfile=("./test_ham/" + filename)
 			shutil.copy(infile,outfile)
 			test_ham_files[filename] = os.sep.join([dirpath, filename])
 print("the percent of files in the training set are:")
@@ -68,11 +70,11 @@ for (dirpath, dirnames, filenames) in os.walk(SPAMPATH):
 	for filename in filenames:
 		infile=(SPAMPATH + filename)
 		if random.uniform(0,1)<SPLIT:
-			outfile=("./train-spam/" + filename)
+			outfile=("./train_spam/" + filename)
 			shutil.copy(infile,outfile)
 			train_spam_files[filename] = os.sep.join([dirpath, filename])
 		else:
-			outfile=("./test-spam/" + filename)
+			outfile=("./test_spam/" + filename)
 			shutil.copy(infile,outfile)
 			test_spam_files[filename] = os.sep.join([dirpath, filename])
 print("the percent of files in the training set are:")
