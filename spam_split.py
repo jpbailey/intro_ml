@@ -1,5 +1,5 @@
 """
-Edited November 15, 2015 by Joe Bailey
+Edited April 22, 2016 by Joe Bailey
 download the corpus from:  http://spamassassin.apache.org/publiccorpus/
 in particular you want two files.  the first file should be in
 the same directory with this scrips an called "easy_ham":
@@ -17,8 +17,8 @@ import shutil
 # define globl variables here
 HAMPATH = "./easy_ham/"
 SPAMPATH = "./spam/"
-TRAIN_PERCENT = 0.05 # percentage of the corpus used to train
-TEST_PERCENT = 0.05  # percentage of the corpus used to test
+TRAIN_PERCENT = 0.75 # percentage of the corpus used to train
+TEST_PERCENT = 0.25  # percentage of the corpus used to test
 # note that TRAIN_PERCENT + TEST_PERCENT must be less than or equal to 1
 
 if not os.path.exists("./train_ham/"):

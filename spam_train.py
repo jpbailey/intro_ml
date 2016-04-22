@@ -1,7 +1,5 @@
 """
-Edited November 15, 2015 by Joe Bailey
-making addditional comments here
-even more comments here
+Edited April 22, 2016 by Joe Bailey
 """
 
 # import the libraries needed
@@ -13,7 +11,7 @@ import shutil
 import string
 
 # define global variables
-STOPS = stopwords.words('english')
+STOPS = stopwords.words("english")
 EXCLUDE = set(string.punctuation) | set(["''", "BR", "--", "/td", "nbsp", "2002", "localhost"])
 SPAMDIR = "./train_spam/"
 HAMDIR = "./train_ham/"
