@@ -1,5 +1,5 @@
 """
-Edited April 22, 2016 by Joe Bailey
+Edited April 28, 2016 by Joe Bailey
 """
 
 # import the libraries needed
@@ -16,53 +16,71 @@ EXCLUDE = set(string.punctuation) | set(["''", "BR", "--", "/td", "nbsp", "2002"
 SPAMDIR = "./train_spam/"
 HAMDIR = "./train_ham/"
 
-hamwords = []
-for (dirpath, dirnames, filenames) in os.walk(HAMDIR):
-	for filename in filenames:
-		inputfile=(HAMDIR + filename)
-		with open (inputfile, "r") as myfile:
-			s=myfile.read().replace('\n', '')
-			s = filter(lambda x: x in string.printable, s)
-			wordlist=nltk.word_tokenize(s)
-			filtered_words = [i for i in wordlist if (i not in STOPS) and (i not in EXCLUDE)]
-			hamwords = hamwords + filtered_words
-fdist=nltk.FreqDist(hamwords)
-top_list = fdist.most_common(1000)
-hamwords=[]
-for each in top_list:
-	hamwords.append(each[0])
-raw_input("Done with ham training.  Press Enter to continue...")
 
-spamwords = []
-for (dirpath, dirnames, filenames) in os.walk(SPAMDIR):
-	for filename in filenames:
-		inputfile=(SPAMDIR + filename)
-		with open (inputfile, "r") as myfile:
-			s=myfile.read().replace('\n', '')
-			s = filter(lambda x: x in string.printable, s)
-			wordlist=nltk.word_tokenize(s)
-			filtered_words = [i for i in wordlist if (i not in STOPS) and (i not in EXCLUDE)]
-			spamwords = spamwords + filtered_words
-fdist=nltk.FreqDist(spamwords)
-top_list = fdist.most_common(1000)
-spamwords=[]
-for each in top_list:
-	spamwords.append(each[0])
-raw_input("Done with spam training.  Press Enter to continue...")
+def GetUniqueWords(set_one, set_two):
+	"""
+	Two distinct lists are passed and the intersection of the two sets are removed.
+	"""
+	clean_one=[]
+	clean_two=[]
+	for each in set_one:
+		if each not in set_two:
+			clean_one.append(each)
+	for each in set_two:
+		if each not in set_one:
+			clean_two.append(each)
+	return clean_one, clean_two
 
-shared_words = list(set(hamwords) & set(spamwords))
+def GetWordlist(inputfile):
+	"""
+	Reads in a file as a string and puts it into a list.  Assumes that each line
+	is its own word.
+	"""
+	f = open(inputfile, 'r')
+	wordlist = f.read().splitlines()
+	return wordlist
 
-ham_only_words = set(hamwords) - set(shared_words)
-f = open("./ham_only_words.txt", 'w')
-for each in ham_only_words:
-	f.write(each + "\n")
-f.close()
+def SaveWordlist(wordlist, outfile):
+	"""
+	Saves a list of words to the appropriate file.
+	"""
+	f = open(outfile, "w")
+	for each in wordlist:
+		f.write("%s\n" % each)
+	f.close()
 
-spam_only_words = set(spamwords) - set(shared_words)
-f = open("./spam_only_words.txt", 'w')
-for each in spam_only_words:
-	f.write(each + "\n")
-f.close()
+def GetDirWords(directory):
+	"""
+	Reads in all of the words found within all the files within a directory.
+	"""
+	words = []
+	for (dirpath, dirnames, filenames) in os.walk(directory):
+		for filename in filenames:
+			inputfile=(directory + filename)
+			wordlist = GetWordlist(inputfile)
+			words = words + wordlist
+	fdist=nltk.FreqDist(words)
+	top_list = fdist.most_common(1000)
+	words=[]
+	for each in top_list:
+		words.append(each[0])
+	return words
 
-raw_input("Done with training.  Wrote words to ham_only_words.txt and spam_only_words.txt. Press Enter to continue...")
+def main():
+	"""
+	The main part of the script that loops through the input file and processes it
+	"""
+	print ("Processing ham training sample.")
+	hamwords = GetDirWords(HAMDIR)
+	raw_input("Press Enter to continue...")
+	print ("Processing spam training sample.")
+	spamwords = GetDirWords(SPAMDIR)
+	raw_input("Press Enter to continue...")
+	ham_only, spam_only = GetUniqueWords(hamwords, spamwords)
+	SaveWordlist(ham_only, "./ham_only_words.txt")
+	SaveWordlist(spam_only, "./spam_only_words.txt")	
+
+
+if '__main__' == __name__:
+	main()
 

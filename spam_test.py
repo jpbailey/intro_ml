@@ -1,77 +1,73 @@
 """
-Edited April 22, 2016 by Joe Bailey
+Edited April 28, 2016 by Joe Bailey
 """
 
 # import the libraries needed
 import os
-import nltk
-from nltk.corpus import stopwords
-import random
-import shutil
-import string
 
 # define global variables
-STOPS = stopwords.words('english')
 SPAMDIR = "./test_spam/"
 HAMDIR = "./test_ham/"
-STOPS = stopwords.words('english')
-EXCLUDE = set(string.punctuation) | set(["''", "BR", "--", "/td", "nbsp", "2002", "localhost"])
 
-# bring in the spam only words
-with open("./spam_only_words.txt") as f:
-    spam_only_words = f.read().splitlines()
+def GetWordlist(inputfile):
+	"""
+	Reads in a file as a string and puts it into a list.  Assumes that each line
+	is its own word.
+	"""
+	f = open(inputfile, 'r')
+	wordlist = f.read().splitlines()
+	f.close()
+	return wordlist
 
-# bring in the ham only words
-with open("./ham_only_words.txt") as f:
-    ham_only_words = f.read().splitlines()
+def ProcessOneFile(f, hamwords, spamwords):
+	"""
+	Gets one email in the test set and predicts whether or not it is ham or spam by counting
+	the number of words found within each dictionary.
+	"""
+	wordlist = GetWordlist(f)
+	ham_score = (len(list(set(wordlist) & set(hamwords))))
+	spam_score = (len(list(set(wordlist) & set(spamwords))))
+	if (ham_score > spam_score):
+		status = "ham"
+	else:
+		status = "spam"
+	return status
 
-type2_file = open("./type2.txt", 'w')
-
-ham_correct=0
-ham_incorrect=0
-spam_correct=0
-spam_incorrect=0
-
-for (dirpath, dirnames, filenames) in os.walk(SPAMDIR):
-	for filename in filenames:
-		inputfile=(SPAMDIR + filename)
-		with open (inputfile, "r") as myfile:
-			s=myfile.read().replace('\n', '')
-			s = filter(lambda x: x in string.printable, s)
-			wordlist=nltk.word_tokenize(s)
-			filtered_words = [i for i in wordlist if (i not in STOPS) and (i not in EXCLUDE)]
-			ham_score = (len(list(set(filtered_words) & set(ham_only_words))))
-			spam_score = (len(list(set(filtered_words) & set(spam_only_words))))
-			if spam_score>ham_score:
-				spam_correct+=1
+def ProcessDirectory(group, ham_words, spam_words):
+	"""
+	Goes through a directory of ham or spam and invokes the processing of one email.
+	"""
+	if group == "ham":
+		directory = HAMDIR
+	else:
+		directory = SPAMDIR
+	correct = 0
+	incorrect = 0
+	for (dirpath, dirnames, filenames) in os.walk(directory):
+		for filename in filenames:
+			infile = (directory + filename)
+			prediction = ProcessOneFile(infile, ham_words, spam_words)
+			if prediction == group:
+				correct = correct + 1
 			else:
-				spam_incorrect+=1
-				for each in filtered_words:
-					type2_file.write((each + "\n"))
-type2_file.close()
-raw_input("Done with spam testing.  Press Enter to continue...")
+				print ("Incorrect prediction with %s." % infile)
+				incorrect = incorrect + 1
+	return correct, incorrect
 
-type1_file = open("./type1.txt", "w")
-for (dirpath, dirnames, filenames) in os.walk(HAMDIR):
-	for filename in filenames:
-		inputfile=(HAMDIR + filename)
-		with open (inputfile, "r") as myfile:
-			s=myfile.read().replace('\n', '')
-			s = filter(lambda x: x in string.printable, s)
-			wordlist=nltk.word_tokenize(s)
-			filtered_words = [i for i in wordlist if (i not in STOPS) and (i not in EXCLUDE)]
-			ham_score = (len(list(set(filtered_words) & set(ham_only_words))))
-			spam_score = (len(list(set(filtered_words) & set(spam_only_words))))
-			if spam_score>ham_score:
-				ham_incorrect+=1
-				for each in filtered_words:
-					type1_file.write((each + "\n"))
-			else:
-				ham_correct+=1
-raw_input("Done with ham testing.  Press Enter to continue...")
-type1_file.close()
 
-print ("Ham accuracy is %f." % (ham_correct/float(ham_correct + ham_incorrect)))
-print ("Spam accuracy is %f." % (spam_correct/float(spam_correct + spam_incorrect)))
+def main():
+	"""
+	This is the main program that invokes the processing of each test directory.
+	"""
+	spam_words = GetWordlist("./spam_only_words.txt")
+	ham_words = GetWordlist("./ham_only_words.txt")
+	print "looking at ham directory"
+	correct, incorrect = ProcessDirectory("ham", ham_words, spam_words)
+	print ("Results:  %d correct and %d incorrect" % (correct, incorrect))
+	print "looking at the spam directory"
+	correct, incorrect = ProcessDirectory("spam", ham_words, spam_words)
+	print ("Results:  %d correct and %d incorrect" % (correct, incorrect))
 
+if '__main__' == __name__:
+	main()
 
